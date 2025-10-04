@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazi Ebook Generator | Gemini Free Tier</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bazi-red': '#cc3333', /* Merah Khas Tiongkok */
+                        'bazi-gold': '#ffcc66', /* Emas Khas Tiongkok */
+                        'dark-bg': '#1f2937', /* Abu Gelap */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* --- STYLING KHUSUS EBOOK UNTUK STRUKTUR YANG RAPI --- */
+        .ebook-content h1 {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #cc3333; /* Warna Merah Bazi */
+            border-bottom: 2px solid #ffcc66; /* Garis bawah Emas Bazi */
+            padding-bottom: 0.5rem;
+        }
+        .ebook-content h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #ffcc66; /* Warna Emas Bazi */
+        }
+        .ebook-content p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+            text-align: justify; /* Membuat teks lebih rapi seperti buku */
+        }
+        .ebook-content ul, .ebook-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+            list-style-type: disc; /* Untuk list */
+        }
+        .ebook-content li {
+            margin-bottom: 0.5rem;
+        }
+        .ebook-content a {
+            color: #ffcc66;
+            text-decoration: underline;
+        }
+        /* --- END STYLING KHUSUS EBOOK --- */
+
+        /* Style untuk area yang bisa diedit */
+        .ebook-content[contenteditable="true"]:focus {
+            outline: 2px solid #ffcc66;
+            box-shadow: 0 0 10px rgba(255, 204, 102, 0.5);
+        }
+
+
+        /* Media Print untuk PDF */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .ebook-content {
+                max-width: 100% !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                color: #000000 !important;
+                padding: 20px;
+                font-family: 'serif' !important; /* Gunakan font yang bagus untuk cetak */
+            }
+            .ebook-content h1, .ebook-content h2 {
+                color: #cc3333 !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+            .ebook-content a {
+                color: #0000ff !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-bg min-h-screen font-sans text-gray-100 flex justify-center py-8 px-4">
+
+    <!-- Kontainer Utama -->
+    <div class="w-full max-w-4xl space-y-8">
+        
+        <!-- Header -->
+        <header class="text-center no-print">
+            <h1 class="text-4xl font-extrabold text-bazi-red mb-2 tracking-tight">
+                BAZI EBOOK WRITER
+            </h1>
+            <p class="text-gray-400">Generator Konten Metafisika Tiongkok (Powered by Gemini Free Tier)</p>
+            <p class="text-xs mt-1 text-bazi-gold">⭐ Model Gemini 2.5 Flash digunakan untuk akses gratis.</p>
+        </header>
+
+        <!-- Form Input dan Kontrol (No Print) -->
+        <div class="bg-gray-800 p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700 space-y-6 no-print">
+            
+            <!-- Input Prompt -->
+            <div>
+                <label for="prompt" class="block text-lg font-medium mb-2 text-bazi-gold">
+                    Topik Ebook (Contoh: "Analisis pilar hari Jia Wood" atau "Basic Bazi concepts")
+                </label>
+                <textarea id="prompt" rows="3" placeholder="Masukkan topik spesifik Bazi Tiongkok yang ingin kamu jadikan Ebook/PDF."
+                    class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-bazi-red focus:border-bazi-red transition duration-200 text-gray-100 placeholder-gray-400">
+                </textarea>
+            </div>
+            
+            <!-- Input Negative Prompt -->
+            <div>
+                <label for="negative-prompt" class="block text-lg font-medium mb-2 text-gray-300">
+                    Penyaring Konten (Opsional - Apa yang HARUS DIHINDARI Model)
+                </label>
+                <textarea id="negative-prompt" rows="2" placeholder="Contoh: 'Jangan gunakan istilah terlalu akademis', atau 'Hindari prediksi keuangan'"
+                    class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-bazi-red focus:border-bazi-red transition duration-200 text-gray-100 placeholder-gray-400 text-sm">
+                </textarea>
+            </div>
+
+            <!-- Pilihan Bahasa -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="w-full sm:w-1/2">
+                    <label for="language" class="block text-lg font-medium mb-2 text-bazi-gold">
+                        Pilih Bahasa
+                    </label>
+                    <select id="language"
+                        class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg focus:ring-bazi-red focus:border-bazi-red transition duration-200 text-gray-100">
+                        <option value="Indonesian">Bahasa Indonesia</option>
+                        <option value="English">English</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tombol Generate -->
+            <button id="generate-btn" disabled
+                class="w-full py-4 px-6 bg-bazi-red text-white font-bold text-xl rounded-lg shadow-lg hover:bg-red-700 transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                <div id="loading-indicator" class="hidden flex items-center">
+                    <div class="animate-spin border-4 border-bazi-gold border-solid h-6 w-6 rounded-full mr-3 border-r-transparent"></div>
+                    <span>Gemini sedang menulis konten Bazi...</span>
+                </div>
+                <span id="generate-text">Generate Ebook Konten</span>
+            </button>
+            
+            <!-- Pesan Error/Info -->
+            <div id="message-box" class="hidden p-3 rounded-lg text-sm bg-red-800 text-red-200"></div>
+
+        </div>
+
+        <!-- Area Hasil Ebook -->
+        <div class="space-y-4">
+            <h2 class="text-2xl font-bold text-bazi-red no-print">Hasil Konten (Edit di Sini & Siap Cetak PDF)</h2>
+            
+            <div id="result-container" class="min-h-72 bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-10 border border-gray-700">
+                <p id="initial-message" class="text-gray-400 text-lg text-center">
+                    Teks Ebook/PDF tentang Metafisika Tiongkok (Bazi) akan muncul di sini. Setelah muncul, kamu bisa langsung mengedit teks ini!
+                </p>
+                <!-- Konten Ebook yang di-generate akan dimasukkan di sini dan bisa diedit -->
+                <div id="ebook-content" class="ebook-content text-gray-200 hidden" contenteditable="true"></div>
+            </div>
+
+            <!-- Tombol Aksi PDF/Copy (No Print) -->
+            <div class="text-center no-print pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+                
+                <!-- Tombol Cetak PDF -->
+                <button id="print-btn" disabled
+                    class="hidden inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-gray-900 bg-bazi-gold hover:bg-yellow-400 transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41l2.35 2.35l5.88-5.88l1.41 1.41L12.23 15L8 10.77l-2.46 2.46zM19 8h-4V3H9v5H5l4 4l5.06-5.06l4 4V8z"/>
+                    </svg>
+                    Cetak Ebook PDF
+                </button>
+                
+                <!-- Tombol Copy Konten -->
+                <button id="copy-btn" disabled
+                    class="hidden inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gray-700 hover:bg-gray-600 transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    Copy Semua Konten
+                </button>
+            </div>
+            
+            <!-- Area Sumber/Citations -->
+            <div id="sources-container" class="hidden p-4 mt-4 bg-gray-800 rounded-lg text-sm border-t border-gray-700 no-print">
+                <h3 class="font-bold text-bazi-gold mb-2">Sumber Informasi (Grounding)</h3>
+                <ul id="sources-list" class="list-disc ml-5 space-y-1 text-gray-400"></ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Variabel global
+        const promptInput = document.getElementById('prompt');
+        const negativePromptInput = document.getElementById('negative-prompt');
+        const languageSelect = document.getElementById('language');
+        const generateBtn = document.getElementById('generate-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const generateText = document.getElementById('generate-text');
+        const messageBox = document.getElementById('message-box');
+        const initialMessage = document.getElementById('initial-message');
+        const ebookContent = document.getElementById('ebook-content');
+        const printBtn = document.getElementById('print-btn');
+        const copyBtn = document.getElementById('copy-btn'); // New Copy Button
+        const sourcesContainer = document.getElementById('sources-container');
+        const sourcesList = document.getElementById('sources-list');
+
+        // Konfigurasi API - API Key di reset ke string kosong
+        const apiKey = "AIzaSyDlnJBOSDlIBuSAmhc32hqV-ves0X185EE"; 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        // --- FUNGSI UTILITAS UI ---
+
+        function setLoading(isLoading) {
+            generateBtn.disabled = isLoading || promptInput.value.trim().length === 0;
+            promptInput.disabled = isLoading;
+            negativePromptInput.disabled = isLoading;
+            languageSelect.disabled = isLoading;
+            if (isLoading) {
+                loadingIndicator.classList.remove('hidden');
+                generateText.classList.add('hidden');
+            } else {
+                loadingIndicator.classList.add('hidden');
+                generateText.classList.remove('hidden');
+            }
+        }
+
+        function showMessage(message, type = 'error') {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-red-800', 'bg-blue-800', 'text-red-200', 'text-blue-200');
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-800', 'text-red-200');
+            } else {
+                messageBox.classList.add('bg-blue-800', 'text-blue-200');
+            }
+        }
+
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        function displaySources(sources) {
+            sourcesList.innerHTML = '';
+            if (sources && sources.length > 0) {
+                sourcesContainer.classList.remove('hidden');
+                sources.forEach((source) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="${source.uri}" target="_blank" class="hover:text-bazi-gold transition">${source.title || 'Sumber'}</a>`;
+                    sourcesList.appendChild(li);
+                });
+            } else {
+                sourcesContainer.classList.add('hidden');
+            }
+        }
+
+        function printEbook() {
+            const isIndonesian = languageSelect.value === 'Indonesian';
+            const message = isIndonesian 
+                ? "Mencoba membuka dialog cetak. Jika gagal (diblokir browser), gunakan Ctrl+P atau Cmd+P."
+                : "Attempting to open print dialog. If it fails (browser blocked), use Ctrl+P or Cmd+P.";
+            showMessage(message, 'info');
+            
+            setTimeout(() => {
+                window.print();
+            }, 100); 
+        }
+
+        function copyEbookContent() {
+            // Menggunakan DOM Range dan Selection untuk menyalin konten yang di-*render* (termasuk tag HTML menjadi teks)
+            const range = document.createRange();
+            range.selectNode(ebookContent);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                // Gunakan execCommand('copy') sebagai fallback atau di lingkungan iframe
+                const successful = document.execCommand('copy');
+                const isIndonesian = languageSelect.value === 'Indonesian';
+                if (successful) {
+                    showMessage(isIndonesian ? "Konten Bazi berhasil disalin ke clipboard!" : "Bazi content successfully copied to clipboard!", 'info');
+                } else {
+                    showMessage(isIndonesian ? "Gagal menyalin. Silakan salin manual." : "Copy failed. Please copy manually.", 'error');
+                }
+            } catch (err) {
+                console.error('Copy command failed: ', err);
+                showMessage(isIndonesian ? "Gagal menyalin. Silakan salin manual." : "Copy failed. Please copy manually.", 'error');
+            }
+            
+            // Hapus seleksi setelah menyalin
+            window.getSelection().removeAllRanges();
+        }
+
+        // --- LOGIC API CALL DAN RETRY ---
+
+        async function fetchWithRetry(url, options, maxRetries = 3, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    
+                    if (response.ok) {
+                        return response;
+                    }
+                    
+                    const status = response.status;
+                    let errorDetails = `Permintaan gagal dengan status ${status}.`;
+                    try {
+                        const errorBody = await response.json();
+                        if (errorBody.error && errorBody.error.message) {
+                            errorDetails += ` Detail: ${errorBody.error.message}`;
+                        } else {
+                            errorDetails += " Detail tidak tersedia. Pastikan API Key benar.";
+                        }
+                    } catch (jsonError) {
+                        errorDetails += " Server memberikan respons non-JSON.";
+                    }
+                    
+                    if (status === 429 || status >= 500) {
+                        if (i < maxRetries - 1) {
+                            const waitTime = delay * Math.pow(2, i) + Math.random() * 1000;
+                            showMessage(`Error sementara (${status}). Mencoba lagi dalam ${Math.round(waitTime / 1000)} detik...`, 'info');
+                            await new Promise(resolve => setTimeout(resolve, waitTime));
+                            continue;
+                        }
+                    }
+                    
+                    throw new Error(errorDetails); 
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error; 
+                    }
+                    const waitTime = delay * Math.pow(2, i) + Math.random() * 1000;
+                    showMessage(`Koneksi error. Mencoba lagi dalam ${Math.round(waitTime / 1000)} detik...`, 'info');
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                }
+            }
+        }
+
+        /**
+         * Fungsi utama untuk menghasilkan konten Ebook Bazi.
+         */
+        async function generateEbook() {
+            hideMessage();
+            const prompt = promptInput.value.trim();
+            const negativePrompt = negativePromptInput.value.trim();
+            const language = languageSelect.value;
+            const isIndonesian = language === 'Indonesian';
+
+            if (apiKey === "") {
+                showMessage(isIndonesian ? "ERROR: API Key belum diisi. Harap isi 'const apiKey = \"\"' di dalam kode JavaScript." : "ERROR: API Key is missing. Please fill in 'const apiKey = \"\"' in the JavaScript code.");
+                return;
+            }
+
+            if (prompt.length < 10) {
+                showMessage(isIndonesian ? "ERROR: Topik Ebook minimal harus 10 karakter." : "ERROR: Ebook topic must be at least 10 characters long.");
+                return;
+            }
+
+            setLoading(true);
+            initialMessage.classList.add('hidden');
+            ebookContent.classList.add('hidden');
+            printBtn.classList.add('hidden');
+            copyBtn.classList.add('hidden'); // Sembunyikan tombol copy
+            sourcesContainer.classList.add('hidden');
+            
+            // Build the base System Instruction
+            let systemPrompt = isIndonesian
+                ? "Anda adalah seorang penulis dan pakar Metafisika Tiongkok (Bazi) profesional. Tulis konten setidaknya 500 kata dalam gaya format Ebook yang informatif, mendalam, dan terstruktur. JANGAN PERNAH menyertakan kalimat pembuka internal (seperti: 'Oke, saya sudah mendapatkan informasi...'). Gunakan tag <h1> untuk judul utama, <h2> untuk sub-bab, dan gunakan list (<ul> atau <ol>) jika sesuai. Tulis konten secara eksklusif dalam Bahasa Indonesia. Sertakan pendahuluan dan kesimpulan singkat."
+                : "You are a professional Chinese Metaphysics (Bazi) author and expert. Write content of at least 500 words in an informative, in-depth, and well-structured Ebook format. NEVER include internal opening phrases (like: 'Okay, I have gathered enough information...'). Use <h1> tags for the main title, <h2> tags for sub-chapters, and use lists (<ul> or <ol>) where appropriate. Write the content exclusively in English. Include a brief introduction and conclusion.";
+
+            // Append Negative Prompt instruction if provided
+            if (negativePrompt) {
+                const negativeInstruction = isIndonesian
+                    ? ` INSTRUKSI TAMBAHAN (PENTING): Konten harus menghindari topik dan gaya berikut: ${negativePrompt}.`
+                    : ` ADDITIONAL INSTRUCTION (CRITICAL): The content must avoid the following topics and styles: ${negativePrompt}.`;
+                systemPrompt += negativeInstruction;
+            }
+            
+            const userQuery = isIndonesian
+                ? `Tulis konten Ebook Bazi tentang topik berikut: ${prompt}`
+                : `Write an Ebook content on the following Bazi topic: ${prompt}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+            
+            try {
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                let generatedText = '';
+                let sources = [];
+                
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    generatedText = candidate.content.parts[0].text;
+
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attribution => ({
+                                uri: attribution.web?.uri,
+                                title: attribution.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
+                    }
+                }
+
+                if (generatedText) {
+                    // Membersihkan teks dari kalimat pembuka internal AI
+                    const cleanupRegex = /^(?:Oke, saya sudah mendapatkan informasi|Baik, berdasarkan pencarian|Here is the content based on my search|Okay, I have gathered enough information|Tentu, berikut adalah|Tentu, berikut konten|Sure, here is the content).*?\s*/i;
+                    const cleanedText = generatedText.replace(cleanupRegex, '').trim();
+
+                    ebookContent.innerHTML = cleanedText;
+                    ebookContent.classList.remove('hidden');
+                    printBtn.classList.remove('hidden');
+                    copyBtn.classList.remove('hidden'); // Tampilkan tombol copy
+                    showMessage(isIndonesian ? "Konten Ebook Bazi berhasil dibuat! Siap diedit, dicopy, atau dicetak PDF." : "Bazi Ebook content successfully generated! Ready to be edited, copied, or printed as PDF.", 'info');
+                    displaySources(sources);
+                } else {
+                    showMessage(isIndonesian ? "ERROR: Model tidak menghasilkan konten. Coba ganti prompt atau pastikan API Key benar." : "ERROR: The model did not generate content. Try a different prompt or ensure your API Key is correct.");
+                    initialMessage.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                showMessage(`${isIndonesian ? "ERROR Fatal: Terjadi kesalahan saat memanggil API." : "FATAL ERROR: An error occurred while calling the API."} ${error.message}`);
+                initialMessage.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+
+        // --- EVENT LISTENERS ---
+
+        generateBtn.addEventListener('click', generateEbook);
+        printBtn.addEventListener('click', printEbook);
+        copyBtn.addEventListener('click', copyEbookContent); // Pasang listener untuk tombol copy
+
+        promptInput.addEventListener('input', function() {
+            generateBtn.disabled = this.value.trim().length === 0;
+        });
+
+        // Inisialisasi: Pastikan tombol generate aktif jika ada input
+        promptInput.dispatchEvent(new Event('input'));
+        
+    </script>
+</body>
+</html>
