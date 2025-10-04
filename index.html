@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bazi Ebook Generator | Gemini Free Tier</title>
+    <title>Baziwithcalvin</title>
     <!-- Memuat Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,8 +31,8 @@
         
         /* Tema Default (Dark Mode) */
         body {
-            background-color: #1f2937;
-            color: #e5e7eb;
+            background-color: '#1f2937';
+            color: '#e5e7eb';
         }
 
         /* Tema Light Mode */
@@ -129,10 +129,11 @@
         
         <!-- Header & Mode Switch -->
         <header class="text-center no-print">
+            <!-- Branding BAZIWITHCALVIN -->
             <h1 class="text-4xl font-extrabold text-bazi-red mb-2 tracking-tight">
-                BAZI EBOOK WRITER
+                BAZIWITHCALVIN
             </h1>
-            <p class="text-gray-400 dark:text-gray-400">Generator Konten Metafisika Tiongkok (Powered by Gemini)</p>
+            <p class="text-gray-400 dark:text-gray-400">Pusat Eksklusif Konten Bazi & Metafisika</p>
             
             <!-- Theme Switcher -->
             <div class="mt-4 flex justify-center gap-3">
@@ -451,9 +452,10 @@
             sourcesContainer.classList.add('hidden');
             
             // System Instruction yang Fleksibel untuk Semua Cabang Metafisika
+            // Memaksa penggunaan tag HTML <ul>/<li> dan melarang marker Markdown * atau -.
             let systemPrompt = isIndonesian
-                ? "Anda adalah seorang penulis dan pakar Metafisika Tiongkok (Bazi, Zi Wei, Feng Shui, Qi Men, dll.) profesional. Tulis konten setidaknya 500 kata dalam gaya format Ebook yang informatif, mendalam, dan terstruktur. JANGAN PERNAH menyertakan kalimat pembuka internal. Gunakan tag <h1> untuk judul utama, <h2> untuk sub-bab, dan gunakan list (<ul> atau <ol>) jika sesuai. Tulis konten secara eksklusif dalam Bahasa Indonesia. Sertakan pendahuluan dan kesimpulan singkat."
-                : "You are a professional Chinese Metaphysics (Bazi, Zi Wei, Feng Shui, Qi Men, etc.) author and expert. Write content of at least 500 words in an informative, in-depth, and well-structured Ebook format. NEVER include internal opening phrases. Use <h1> tags for the main title, <h2> tags for sub-chapters, and use lists (<ul> or <ol>) where appropriate. Write the content exclusively in English. Include a brief introduction and conclusion.";
+                ? "Anda adalah seorang penulis dan pakar Metafisika Tiongkok (Bazi, Zi Wei, Feng Shui, Qi Men, dll.) profesional. Tulis konten setidaknya 500 kata dalam gaya format Ebook yang informatif, mendalam, dan terstruktur. JANGAN PERNAH menyertakan kalimat pembuka internal. Gunakan tag HTML <h1> untuk judul utama, <h2> untuk sub-bab, dan gunakan list HTML (<ul> atau <ol>) dengan tag <li> di dalamnya jika sesuai. JANGAN GUNAKAN MARKER LIST SEPERTI * ATAU -. Tulis konten secara eksklusif dalam Bahasa Indonesia. Sertakan pendahuluan dan kesimpulan singkat."
+                : "You are a professional Chinese Metaphysics (Bazi, Zi Wei, Feng Shui, Qi Men, etc.) author and expert. Write content of at least 500 words in an informative, in-depth, and well-structured Ebook format. NEVER include internal opening phrases. Use HTML tags <h1> for the main title, <h2> for sub-chapters, and use HTML lists (<ul> or <ol>) with <li> tags inside where appropriate. DO NOT USE LIST MARKERS LIKE * OR -. Write the content exclusively in English. Include a brief introduction and conclusion.";
 
             if (negativePrompt) {
                 const negativeInstruction = isIndonesian
